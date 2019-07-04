@@ -17,6 +17,7 @@ import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.EngineSessionState
 import mozilla.components.concept.engine.HitResult
 import mozilla.components.concept.engine.Settings
+import mozilla.components.concept.engine.history.HistoryItem
 import mozilla.components.concept.engine.history.HistoryTrackingDelegate
 import mozilla.components.concept.engine.manifest.WebAppManifestParser
 import mozilla.components.concept.engine.request.RequestInterceptor
@@ -414,6 +415,22 @@ class GeckoEngineSession(
 
     @Suppress("ComplexMethod")
     internal fun createHistoryDelegate() = object : GeckoSession.HistoryDelegate {
+        override fun getVisited(
+            session: GeckoSession,
+            urls: Array<out String>
+        ): GeckoResult<BooleanArray>? {
+            if (privateMode) {
+                return GeckoResult.fromValue(null)
+            }
+
+            val delegate = settings.historyTrackingDelegate ?: return GeckoResult.fromValue(null)
+
+            return launchGeckoResult {
+                val visits = delegate.getVisited(urls.toList())
+                visits.toBooleanArray()
+            }
+        }
+
         @SuppressWarnings("ReturnCount")
         override fun onVisited(
             session: GeckoSession,
@@ -458,20 +475,16 @@ class GeckoEngineSession(
             }
         }
 
-        override fun getVisited(
-            session: GeckoSession,
-            urls: Array<out String>
-        ): GeckoResult<BooleanArray>? {
-            if (privateMode) {
-                return GeckoResult.fromValue(null)
+        override fun onHistoryStateChange(session: GeckoSession, historyList: GeckoSession.HistoryDelegate.HistoryList) {
+            val list = historyList.mapIndexed { index, historyItem ->
+                HistoryItem(
+                    title = historyItem.title,
+                    uri = historyItem.uri,
+                    selected = index == historyList.currentIndex
+                )
             }
 
-            val delegate = settings.historyTrackingDelegate ?: return GeckoResult.fromValue(null)
-
-            return launchGeckoResult {
-                val visits = delegate.getVisited(urls.toList())
-                visits.toBooleanArray()
-            }
+            notifyObservers { onHistoryStateChange(list) }
         }
     }
 

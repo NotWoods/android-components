@@ -4,7 +4,6 @@
 
 package mozilla.components.browser.session
 
-import androidx.lifecycle.Transformations.map
 import mozilla.components.browser.session.ext.syncDispatch
 import mozilla.components.browser.session.ext.toCustomTabSessionState
 import mozilla.components.browser.session.ext.toTabSessionState
@@ -287,6 +286,15 @@ class SessionManager(
 }
 
 /**
+ * Tries to find a session with the provided session ID or the selected session.
+ *
+ * @return Session if found
+ */
+fun SessionManager.getSessionWithIdOrSelected(sessionId: String?): Session? {
+    return sessionId?.let { findSessionById(it) } ?: selectedSession
+}
+
+/**
  * Tries to find a session with the provided session ID and runs the block if found.
  *
  * @return True if the session was found and run successfully.
@@ -312,15 +320,7 @@ fun SessionManager.runWithSessionIdOrSelected(
     sessionId: String?,
     block: SessionManager.(Session) -> Unit
 ): Boolean {
-    sessionId?.let {
-        findSessionById(sessionId)?.let { session ->
-            block(session)
-            return true
-        }
-    }
-    selectedSession?.let {
-        block(it)
-        return true
-    }
-    return false
+    val session = getSessionWithIdOrSelected(sessionId) ?: return false
+    block(session)
+    return true
 }

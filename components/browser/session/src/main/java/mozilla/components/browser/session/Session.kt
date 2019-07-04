@@ -13,12 +13,13 @@ import mozilla.components.browser.session.ext.toSecurityInfoState
 import mozilla.components.browser.session.tab.CustomTabConfig
 import mozilla.components.browser.state.action.ContentAction.UpdateLoadingStateAction
 import mozilla.components.browser.state.action.ContentAction.UpdateProgressAction
-import mozilla.components.browser.state.action.ContentAction.UpdateSecurityInfo
 import mozilla.components.browser.state.action.ContentAction.UpdateSearchTermsAction
+import mozilla.components.browser.state.action.ContentAction.UpdateSecurityInfo
 import mozilla.components.browser.state.action.ContentAction.UpdateTitleAction
 import mozilla.components.browser.state.action.ContentAction.UpdateUrlAction
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.HitResult
+import mozilla.components.concept.engine.history.HistoryItem
 import mozilla.components.concept.engine.manifest.WebAppManifest
 import mozilla.components.concept.engine.media.Media
 import mozilla.components.concept.engine.media.RecordingDevice
@@ -67,6 +68,7 @@ class Session(
         fun onProgress(session: Session, progress: Int) = Unit
         fun onLoadingStateChanged(session: Session, loading: Boolean) = Unit
         fun onNavigationStateChanged(session: Session, canGoBack: Boolean, canGoForward: Boolean) = Unit
+        fun onHistoryStateChanged(session: Session, historyList: List<HistoryItem>) = Unit
         fun onLoadRequest(
             session: Session,
             url: String,
@@ -218,6 +220,10 @@ class Session(
         notifyObservers(old, new) { onNavigationStateChanged(this@Session, canGoBack, new) }
     }
 
+    var historyList: List<HistoryItem> by Delegates.observable(emptyList()) { _, old, new ->
+        notifyObservers(old, new) { onHistoryStateChanged(this@Session, new) }
+    }
+
     /**
      * The currently / last used search terms (or an empty string).
      */
@@ -252,14 +258,14 @@ class Session(
     /**
      * Configuration data in case this session is used for a Custom Tab.
      */
-    var customTabConfig: CustomTabConfig? by Delegates.observable<CustomTabConfig?>(null) { _, _, new ->
+    var customTabConfig: CustomTabConfig? by Delegates.observable(null) { _, _, new ->
         notifyObservers { onCustomTabConfigChanged(this@Session, new) }
     }
 
     /**
      * The Web App Manifest for the currently visited page (or null).
      */
-    var webAppManifest: WebAppManifest? by Delegates.observable<WebAppManifest?>(null) { _, _, new ->
+    var webAppManifest: WebAppManifest? by Delegates.observable(null) { _, _, new ->
         notifyObservers { onWebAppManifestChanged(this@Session, new) }
     }
 
@@ -351,7 +357,7 @@ class Session(
     /**
      * An icon for the currently visible page.
      */
-    var icon: Bitmap? by Delegates.observable<Bitmap?>(null) { _, old, new ->
+    var icon: Bitmap? by Delegates.observable(null) { _, old, new ->
         notifyObservers(old, new) { onIconChanged(this@Session, new) }
     }
 
