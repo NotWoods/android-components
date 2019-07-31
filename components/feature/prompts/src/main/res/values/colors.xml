@@ -14,4 +14,8 @@
         <item>#D4DDE4</item>
         <item>#FFFFFF</item>
     </array>
+
+    <color name="mozac_feature_prompts_red">#E53935</color>
+    <color name="mozac_feature_prompts_green">#43A047</color>
+    <color name="mozac_feature_prompts_blue">#1E88E5</color>
 </resources>

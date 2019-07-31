@@ -16,6 +16,8 @@ import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import mozilla.components.feature.prompts.color.BasicColorAdapter
+import mozilla.components.feature.prompts.color.ColorItem
 
 private const val KEY_SELECTED_COLOR = "KEY_SELECTED_COLOR"
 
@@ -26,15 +28,27 @@ private const val RGB_BIT_MASK = 0xffffff
  */
 internal class ColorPickerDialogFragment : PromptDialogFragment(), DialogInterface.OnClickListener {
 
-    @ColorInt
-    private var initiallySelectedCustomColor: Int? = null
+    /**
+     * The color selected when the prompt was opened.
+     * If it is present in [defaultColors] this value will be null.
+     */
+    @ColorInt private var initiallySelectedCustomColor: Int? = null
+
+    /**
+     * Pre-set list of custom colors. Created from [R.array.mozac_feature_prompts_default_colors].
+     */
     private lateinit var defaultColors: List<ColorItem>
+
     private lateinit var listAdapter: BasicColorAdapter
 
+    /**
+     * The color that the user has selected.
+     */
     @VisibleForTesting
+    @get:ColorInt
     internal var selectedColor: Int
         get() = safeArguments.getInt(KEY_SELECTED_COLOR)
-        set(value) {
+        set(@ColorInt value) {
             safeArguments.putInt(KEY_SELECTED_COLOR, value)
         }
 
@@ -78,7 +92,7 @@ internal class ColorPickerDialogFragment : PromptDialogFragment(), DialogInterfa
                 initiallySelectedCustomColor = null
             }
 
-            color.toColorItem()
+            ColorItem.from(color)
         }
         typedArray.recycle()
 
@@ -103,7 +117,7 @@ internal class ColorPickerDialogFragment : PromptDialogFragment(), DialogInterfa
      * Called when a new color is selected by the user.
      */
     @VisibleForTesting
-    internal fun onColorChange(newColor: Int) {
+    internal fun onColorChange(@ColorInt newColor: Int) {
         selectedColor = newColor
 
         val colorItems = defaultColors.toMutableList()
@@ -115,7 +129,7 @@ internal class ColorPickerDialogFragment : PromptDialogFragment(), DialogInterfa
             newColor
         }
         if (lastColor != null) {
-            colorItems.add(lastColor.toColorItem(selected = lastColor == newColor))
+            colorItems.add(ColorItem.from(lastColor, selected = lastColor == newColor))
         }
 
         listAdapter.submitList(colorItems)
@@ -130,14 +144,6 @@ internal class ColorPickerDialogFragment : PromptDialogFragment(), DialogInterfa
             }
         }
     }
-}
-
-internal fun Int.toColorItem(selected: Boolean = false): ColorItem {
-    return ColorItem(
-        color = this,
-        contentDescription = toHexColor(),
-        selected = selected
-    )
 }
 
 internal fun String.toColor(): Int {

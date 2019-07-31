@@ -28,6 +28,7 @@
     <string name="mozac_feature_prompts_allow">Allow</string>
     <!-- Text of a negative button in dialog requesting to open a new window. -->
     <string name="mozac_feature_prompts_deny">Deny</string>
+
     <!-- Title of the month chooser dialog. -->
     <string name="mozac_feature_prompts_set_month">Pick a month</string>
     <!-- January (3 character long), used on the month chooser dialog. -->
@@ -54,4 +55,21 @@
     <string name="mozac_feature_prompts_nov">Nov</string>
     <!-- December month of the year (3 character long), used on the month chooser dialog. -->
     <string name="mozac_feature_prompts_dec">Dec</string>
+
+    <!-- Label displayed for red, green, blue color sliders -->
+    <string name="mozac_feature_prompts_color_rgb">RGB</string>
+    <!-- Hint for red color value input -->
+    <string name="mozac_feature_prompts_color_red">Red</string>
+    <!-- Hint for green color value input -->
+    <string name="mozac_feature_prompts_color_green">Green</string>
+    <!-- Hint for blue color value input -->
+    <string name="mozac_feature_prompts_color_blue">Blue</string>
+    <!-- Label displayed for hue, saturation, lightness color sliders -->
+    <string name="mozac_feature_prompts_color_hsl">HSL</string>
+    <!-- Hint for hue input -->
+    <string name="mozac_feature_prompts_color_hue">Hue</string>
+    <!-- Hint for saturation input -->
+    <string name="mozac_feature_prompts_color_saturation">Saturation</string>
+    <!-- Hint for lightness input -->
+    <string name="mozac_feature_prompts_color_lightness">Lightness</string>
 </resources>

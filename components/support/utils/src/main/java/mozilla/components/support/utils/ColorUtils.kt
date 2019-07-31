@@ -5,9 +5,47 @@
 package mozilla.components.support.utils
 
 import android.graphics.Color
+import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import androidx.annotation.ColorInt
+import androidx.annotation.Size
 
 object ColorUtils {
+
+    private const val RGB_COMPONENTS_LENGTH = 3L
+    private const val RGB_MAX_INT = 255
+
+    /**
+     * Convert RGB (red-green-blue) components to a color int.
+     *
+     * - rgb[0] is Red [0...1]
+     * - rgb[1] is Green [0...1]
+     * - rgb[2] is Blue [0...1]
+     */
+    @Suppress("FunctionNaming")
+    @ColorInt
+    fun RGBToColor(@Size(RGB_COMPONENTS_LENGTH) rgb: FloatArray): Int =
+        if (SDK_INT >= Build.VERSION_CODES.O) {
+            Color.rgb(rgb[0], rgb[1], rgb[2])
+        } else {
+            Color.rgb(rgbFloatToInt(rgb[0]), rgbFloatToInt(rgb[1]), rgbFloatToInt(rgb[2]))
+        }
+
+    /**
+     * Convert the color int to its RGB (red-green-blue) components.
+     *
+     * - outRgb[0] is Red [0...1]
+     * - outRgb[1] is Green [0...1]
+     * - outRgb[2] is Blue [0...1]
+     */
+    fun colorToRGB(@ColorInt color: Int, @Size(RGB_COMPONENTS_LENGTH) outRgb: FloatArray) {
+        outRgb[0] = rgbIntToFloat(Color.red(color))
+        outRgb[1] = rgbIntToFloat(Color.green(color))
+        outRgb[2] = rgbIntToFloat(Color.blue(color))
+    }
+
+    private fun rgbFloatToInt(rgbComponent: Float) = (rgbComponent * RGB_MAX_INT).toInt()
+    private fun rgbIntToFloat(rgbComponent: Int) = rgbComponent / RGB_MAX_INT.toFloat()
 
     /**
      * Get text color (white or black) that is readable on top of the provided background color.

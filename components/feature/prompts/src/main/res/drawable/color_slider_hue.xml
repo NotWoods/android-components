@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt">
+    <item android:id="@android:id/background">
+        <inset
+            android:insetTop="@dimen/mozac_feature_prompts_slider_background_inset"
+            android:insetBottom="@dimen/mozac_feature_prompts_slider_background_inset">
+            <aapt:attr name="android:drawable">
+                <vector android:width="4dp"
+                    android:height="4dp"
+                    android:viewportWidth="4"
+                    android:viewportHeight="4">
+                    <path
+                        android:pathData="M0,0 H4 V4 H0">
+                        <aapt:attr name="android:fillColor">
+                            <gradient
+                                android:startX="0"
+                                android:startY="0"
+                                android:endX="4"
+                                android:endY="0"
+                                android:type="linear">
+                                <item android:offset="0"    android:color="#FF0000"/>
+                                <item android:offset="0.17" android:color="#FFFF00"/>
+                                <item android:offset="0.33" android:color="#00FF00"/>
+                                <item android:offset="0.50" android:color="#00FFFF"/>
+                                <item android:offset="0.67" android:color="#0000FF"/>
+                                <item android:offset="0.83" android:color="#FF00FF"/>
+                                <item android:offset="1"    android:color="#FF0000"/>
+                            </gradient>
+                        </aapt:attr>
+                    </path>
+                </vector>
+            </aapt:attr>
+        </inset>
+    </item>
+</layer-list>

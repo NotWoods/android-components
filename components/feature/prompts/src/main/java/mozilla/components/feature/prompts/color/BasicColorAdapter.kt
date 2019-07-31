@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package mozilla.components.feature.prompts
+package mozilla.components.feature.prompts.color
 
 import android.graphics.BlendMode
 import android.graphics.BlendModeColorFilter
@@ -23,6 +23,8 @@ import androidx.annotation.VisibleForTesting
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import mozilla.components.feature.prompts.R
+import mozilla.components.feature.prompts.toHexColor
 import mozilla.components.support.utils.ColorUtils
 
 /**
@@ -32,11 +34,25 @@ import mozilla.components.support.utils.ColorUtils
  * @property contentDescription accessibility description of this color.
  * @property selected if true, this is the color that will be set when the dialog is closed.
  */
-data class ColorItem(
+internal data class ColorItem(
     @ColorInt val color: Int,
     val contentDescription: String,
     val selected: Boolean = false
-)
+) {
+    companion object {
+
+        /**
+         * Create a color item from the given color int.
+         */
+        fun from(@ColorInt color: Int, selected: Boolean = false): ColorItem {
+            return ColorItem(
+                color = color,
+                contentDescription = color.toHexColor(),
+                selected = selected
+            )
+        }
+    }
+}
 
 private object ColorItemDiffCallback : DiffUtil.ItemCallback<ColorItem>() {
     override fun areItemsTheSame(oldItem: ColorItem, newItem: ColorItem) =
